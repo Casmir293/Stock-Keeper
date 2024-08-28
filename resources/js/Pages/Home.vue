@@ -1,8 +1,9 @@
+<script setup>
+import DefaultLayout from "../Layouts/DefaultLayout.vue";
+
+defineOptions({ layout: DefaultLayout });
+</script>
+
 <template>
-    <div class="text-purple-700">Hello, Inertia!</div>
-    <v-btn variant="outlined"> Button </v-btn>
+    <section>Hello, Inertia!</section>
 </template>
-
-<script setup></script>
-
-<style lang="scss" scoped></style>
