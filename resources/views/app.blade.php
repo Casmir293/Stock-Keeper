@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    {{-- @routes --}}
     @inertia
 </body>
 

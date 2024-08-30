@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-// import useAuth from "@/composables/useAuth";
+import { ref, reactive, watch } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
-// const { isLoading, signIn } = useAuth();
+const props = defineProps({
+    errors: Object,
+    flash: Object,
+});
+
+const toast = useToast();
 const isValid = ref(false);
 const isLoading = ref(false);
 
@@ -17,9 +23,21 @@ const rules = reactive({
     password: (v: string) => !!v || "Password is required",
 });
 
-const handleSubmit = async () => {
+watch(
+    () => props.flash?.success,
+    (successMessage) => {
+        if (successMessage) {
+            toast.success(successMessage);
+        }
+    },
+    { immediate: true },
+);
+
+const submit = () => {
     if (!isValid.value) return;
-    // signIn(payload.email, payload.password);
+    isLoading.value = true;
+    router.post("/sign-in", payload);
+    isLoading.value = false;
 };
 </script>
 
@@ -52,16 +70,14 @@ const handleSubmit = async () => {
 
             <p>
                 Don't have an account?
-                <router-link :to="{ name: 'SignUp' }" class="text-blue-500"
-                    >sign up</router-link
-                >
+                <Link href="/sign-up" class="text-blue-500">sign up</Link>
             </p>
         </v-form>
         <v-divider></v-divider>
         <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-                @click="handleSubmit"
+                @click="submit"
                 :disabled="!isValid"
                 :loading="isLoading"
                 color="grey-darken-3"

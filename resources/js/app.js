@@ -5,6 +5,13 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { createPinia } from "pinia";
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
+const options = {
+    timeout: 3000
+};
+
 // Vuetify
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
@@ -34,6 +41,7 @@ createInertiaApp({
             .use(plugin)
             .use(vuetify)
             .use(pinia)
+            .use(Toast, options)
             .mount(el);
     },
 });

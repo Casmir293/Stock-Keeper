@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-// import useAuth from "@/composables/useAuth";
+import { ref, reactive, watch } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
-// const { isLoading, signUp } = useAuth();
+const props = defineProps({
+    errors: Object,
+    flash: Object,
+});
+
+const toast = useToast();
 const isValid = ref(false);
 const isLoading = ref(false);
 
@@ -25,9 +32,33 @@ const rules = reactive({
     name: (v: string) => !!v || "Nickname is required",
 });
 
-const handleSubmit = async () => {
+watch(
+    () => props.flash?.success,
+    (successMessage) => {
+        if (successMessage) {
+            toast.success(successMessage);
+        }
+    },
+    { immediate: true },
+);
+
+watch(
+    () => props.errors,
+    (errorMessage) => {
+        if (errorMessage) {
+            toast.error(
+                `Sign up failed: ${errorMessage.name || errorMessage.email || errorMessage.password || "Sign up failed"}`,
+            );
+        }
+    },
+    { immediate: true },
+);
+
+const submit = () => {
     if (!isValid.value) return;
-    // signUp(payload.name, payload.email, payload.password);
+    isLoading.value = true;
+    router.post("/sign-up", payload);
+    isLoading.value = false;
 };
 </script>
 
@@ -50,7 +81,7 @@ const handleSubmit = async () => {
             <br />
             <v-text-field
                 v-model="payload.email"
-                :rules="[rules.email]"
+                :rules="[rules.email] || errors.email"
                 color="grey-darken-1"
                 label="Email address"
                 type="email"
@@ -70,16 +101,14 @@ const handleSubmit = async () => {
 
             <p>
                 Already have an account?
-                <router-link :to="{ name: 'SignIn' }" class="text-blue-500"
-                    >sign in</router-link
-                >
+                <Link href="/sign-in" class="text-blue-500">sign in</Link>
             </p>
         </v-form>
         <v-divider></v-divider>
         <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-                @click="handleSubmit"
+                @click="submit"
                 :disabled="!isValid"
                 :loading="isLoading"
                 color="grey-darken-3"
