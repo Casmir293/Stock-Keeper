@@ -27,16 +27,10 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-        return back()
-            ->withErrors($validator)
-            ->withInput();
+            return back()
+                ->withErrors($validator)
+                ->withInput();
         }
-
-        // if ($validator->fails()) {
-        //     return Inertia::render('auth/SignUp', [
-        //     'errors' => $validator->errors(),
-        //     ]);
-        // }
 
         User::create([
             'name' => $request->name,
@@ -44,6 +38,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('signin')->with('flash', ['success' => 'Account created successfully!']);
+        return to_route('signin')->with('flash', ['success' => 'Account created successfully!']);
     }
 }

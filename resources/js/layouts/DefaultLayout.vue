@@ -35,13 +35,13 @@ const rail = ref(true);
                 <v-divider></v-divider>
 
                 <v-list density="compact" nav>
-                    <router-link :to="{ name: 'SignOut' }">
+                    <!-- <router-link :to="{ name: 'SignOut' }">
                         <v-list-item
                             prepend-icon="mdi-logout"
                             title="Logout"
                             value="logout"
                         ></v-list-item>
-                    </router-link>
+                    </router-link> -->
                 </v-list>
             </v-navigation-drawer>
             <v-main class="m-4 min-h-[96.5dvh]">

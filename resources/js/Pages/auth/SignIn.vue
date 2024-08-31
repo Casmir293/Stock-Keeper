@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from "vue";
 import { Link } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 
 const props = defineProps({
@@ -33,10 +34,30 @@ watch(
     { immediate: true },
 );
 
+watch(
+    () => props.flash?.error,
+    (errorMessage) => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+        }
+    },
+    { immediate: true },
+);
+
+watch(
+    () => props.errors,
+    (errorMessage) => {
+        if (errorMessage?.email || errorMessage?.password) {
+            toast.error(`${errorMessage.email || errorMessage.password}`);
+        }
+    },
+    { immediate: true },
+);
+
 const submit = () => {
     if (!isValid.value) return;
     isLoading.value = true;
-    router.post("/sign-in", payload);
+    router.post(route("signin.store"), payload);
     isLoading.value = false;
 };
 </script>

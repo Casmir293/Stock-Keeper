@@ -47,17 +47,16 @@ watch(
     (errorMessage) => {
         if (errorMessage) {
             toast.error(
-                `Sign up failed: ${errorMessage.name || errorMessage.email || errorMessage.password || "Sign up failed"}`,
+                `${errorMessage.name || errorMessage.email || errorMessage.password}`,
             );
         }
     },
-    { immediate: true },
 );
 
 const submit = () => {
     if (!isValid.value) return;
     isLoading.value = true;
-    router.post("/sign-up", payload);
+    router.post(route("signup.store"), payload);
     isLoading.value = false;
 };
 </script>
@@ -81,7 +80,7 @@ const submit = () => {
             <br />
             <v-text-field
                 v-model="payload.email"
-                :rules="[rules.email] || errors.email"
+                :rules="[rules.email]"
                 color="grey-darken-1"
                 label="Email address"
                 type="email"
