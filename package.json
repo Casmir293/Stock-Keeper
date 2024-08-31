@@ -6,18 +6,29 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@eslint/js": "^9.9.1",
         "autoprefixer": "^10.4.20",
         "axios": "^1.6.4",
+        "eslint": "^9.9.1",
+        "eslint-plugin-vue": "^9.27.0",
+        "globals": "^15.9.0",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.41",
+        "prettier": "^3.3.3",
+        "prettier-plugin-tailwindcss": "^0.6.6",
         "tailwindcss": "^3.4.10",
-        "vite": "^5.0"
+        "vite": "^5.0",
+        "vue-eslint-parser": "^9.4.3"
     },
     "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/vue3": "^1.2.0",
         "@mdi/font": "^7.4.47",
         "@vitejs/plugin-vue": "^5.1.2",
+        "pinia": "^2.2.2",
+        "pinia-plugin-persistedstate": "^3.2.3",
         "vue": "^3.4.38",
+        "vue-toastification": "^2.0.0-rc.5",
         "vuetify": "^3.7.1"
     }
 }
