@@ -57,7 +57,7 @@ watch(
 const submit = () => {
     if (!isValid.value) return;
     isLoading.value = true;
-    router.post(route("signin.store"), payload);
+    router.post(route("login.store"), payload);
     isLoading.value = false;
 };
 </script>

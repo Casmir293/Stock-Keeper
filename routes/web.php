@@ -7,14 +7,11 @@ use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
     return Inertia::render('Home');
-})->name('home');
+})->name('home')->middleware('auth');
 
-Route::get('sign-up', [RegisterController::class, 'index'])->name('signup');
-Route::post('/sign-up', [RegisterController::class, 'store'])->name('signup.store');
-
-// Route::get('sign-in', function () {
-//     return Inertia::render('auth/SignIn');
-// })->name('signin');
-
-Route::get('/sign-in', [LoginController::class, 'index'])->name('signin');
-Route::post('/sign-in', [LoginController::class, 'store'])->name('signin.store');
+Route::middleware('noAuth')->group(function () {
+        Route::get('/signup', [RegisterController::class, 'index'])->name('signup');
+        Route::post('/signup', [RegisterController::class, 'store'])->name('signup.store');
+        Route::get('/login', [LoginController::class, 'index'])->name('login');
+        Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+});
