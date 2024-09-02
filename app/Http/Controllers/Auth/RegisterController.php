@@ -38,6 +38,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return to_route('signin')->with('flash', ['success' => 'Account created successfully!']);
+        return to_route('login')->with('flash', ['success' => 'Account created! Login']);
     }
 }

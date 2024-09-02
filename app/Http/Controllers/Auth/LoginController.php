@@ -37,10 +37,6 @@ class LoginController extends Controller
             return to_route('home')->with('flash', ['success' => 'Logged in successfully!']);
         }
 
-        // return back()->withErrors([
-        //     'message' => 'The provided credentials do not match our records.',
-        // ])->withInput();
-
         return back()->with('flash', ['error' => 'Invalid email/password'])->withInput();
     }
 }
