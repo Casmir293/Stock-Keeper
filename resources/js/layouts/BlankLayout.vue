@@ -1,4 +1,23 @@
-<script setup></script>
+<script setup>
+import { useToast } from "vue-toastification";
+import { watch } from "vue";
+
+const props = defineProps({
+    flash: Object,
+});
+
+const toast = useToast();
+
+watch(
+    () => props.flash?.success,
+    (successMessage) => {
+        if (successMessage) {
+            toast.success(successMessage);
+        }
+    },
+    { immediate: true },
+);
+</script>
 
 <template>
     <section class="flex h-dvh flex-col items-center justify-center">
