@@ -1,93 +1,147 @@
 <script setup>
-import { ref, computed, nextTick, onMounted } from "vue";
+import { ref, computed, nextTick, reactive, watch } from "vue";
 
+const isValid = ref(false);
 const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
 
+const rules = reactive({
+    name: (v) => !!v || "Product name is required",
+    quantity: (v) =>
+        (!!v && /^\d+$/.test(v)) || "Quantity must be a whole number",
+    cost_price: (v) =>
+        (!!v && /^\d+(\.\d{1,2})?$/.test(v)) ||
+        "Cost price must be a valid number",
+    selling_price: (v) =>
+        (!!v && /^\d+(\.\d{1,2})?$/.test(v)) ||
+        "Selling price must be a valid number",
+});
+
 const headers = [
     {
-        title: "Dessert (100g serving)",
+        title: "Products",
         align: "start",
-        sortable: false,
         key: "name",
     },
-    { title: "Calories", key: "calories" },
-    { title: "Fat (g)", key: "fat" },
-    { title: "Carbs (g)", key: "carbs" },
-    { title: "Protein (g)", key: "protein" },
+    { title: "Quantity", key: "quantity" },
+    { title: "Cost Price (₦)", key: "cost_price" },
+    { title: "Selling Price (₦)", key: "selling_price" },
+    { title: "Remarks", key: "remarks" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
-const desserts = ref([]);
+const products = ref([
+    {
+        name: "Frozen Yogurt",
+        quantity: 159,
+        cost_price: 6.0,
+        selling_price: 24,
+        remarks: 4.0,
+    },
+    {
+        name: "Ice cream sandwich",
+        quantity: 237,
+        cost_price: 9.0,
+        selling_price: 37,
+        remarks: 4.3,
+    },
+    {
+        name: "Eclair",
+        quantity: 262,
+        cost_price: 16.0,
+        selling_price: 23,
+        remarks: 6.0,
+    },
+    {
+        name: "Cupcake",
+        quantity: 305,
+        cost_price: 3.7,
+        selling_price: 67,
+        remarks: 4.3,
+    },
+    {
+        name: "Gingerbread",
+        quantity: 356,
+        cost_price: 16.0,
+        selling_price: 49,
+        remarks: 3.9,
+    },
+    {
+        name: "Jelly bean",
+        quantity: 375,
+        cost_price: 0.0,
+        selling_price: 94,
+        remarks: 0.0,
+    },
+    {
+        name: "Lollipop",
+        quantity: 392,
+        cost_price: 0.2,
+        selling_price: 98,
+        remarks: 0,
+    },
+    {
+        name: "Honeycomb",
+        quantity: 408,
+        cost_price: 3.2,
+        selling_price: 87,
+        remarks: 6.5,
+    },
+    {
+        name: "Donut",
+        quantity: 452,
+        cost_price: 25.0,
+        selling_price: 51,
+        remarks: 4.9,
+    },
+    {
+        name: "KitKat",
+        quantity: 518,
+        cost_price: 26.0,
+        selling_price: 65,
+        remarks: 7,
+    },
+]);
 
 const defaultItem = {
     name: "",
-    calories: 0,
-    fat: 0,
-    carbs: 0,
-    protein: 0,
+    quantity: 0,
+    cost_price: 0,
+    selling_price: 0,
+    remarks: 0,
 };
 
 const editedItem = ref({ ...defaultItem });
+
+watch(
+    () => editedItem.value,
+    () => {
+        isValid.value = Object.keys(rules).every((key) => {
+            return rules[key](editedItem.value[key]) === true;
+        });
+    },
+    { deep: true, immediate: true },
+);
 
 const formTitle = computed(() =>
     editedIndex.value === -1 ? "New Item" : "Edit Item",
 );
 
-const initialize = () => {
-    desserts.value = [
-        {
-            name: "Frozen Yogurt",
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-        },
-        {
-            name: "Ice cream sandwich",
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-        },
-        { name: "Eclair", calories: 262, fat: 16.0, carbs: 23, protein: 6.0 },
-        { name: "Cupcake", calories: 305, fat: 3.7, carbs: 67, protein: 4.3 },
-        {
-            name: "Gingerbread",
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-        },
-        {
-            name: "Jelly bean",
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-        },
-        { name: "Lollipop", calories: 392, fat: 0.2, carbs: 98, protein: 0 },
-        { name: "Honeycomb", calories: 408, fat: 3.2, carbs: 87, protein: 6.5 },
-        { name: "Donut", calories: 452, fat: 25.0, carbs: 51, protein: 4.9 },
-        { name: "KitKat", calories: 518, fat: 26.0, carbs: 65, protein: 7 },
-    ];
-};
-
 const editItem = (item) => {
-    editedIndex.value = desserts.value.indexOf(item);
+    editedIndex.value = products.value.indexOf(item);
     editedItem.value = { ...item };
     dialog.value = true;
 };
 
 const deleteItem = (item) => {
-    editedIndex.value = desserts.value.indexOf(item);
+    editedIndex.value = products.value.indexOf(item);
     editedItem.value = { ...item };
     dialogDelete.value = true;
 };
 
 const deleteItemConfirm = () => {
-    desserts.value.splice(editedIndex.value, 1);
+    products.value.splice(editedIndex.value, 1);
     closeDelete();
 };
 
@@ -108,22 +162,21 @@ const closeDelete = () => {
 };
 
 const save = () => {
+    if (!isValid.value) return;
     if (editedIndex.value > -1) {
-        Object.assign(desserts.value[editedIndex.value], editedItem.value);
+        Object.assign(products.value[editedIndex.value], editedItem.value);
     } else {
-        desserts.value.push(editedItem.value);
+        products.value.push(editedItem.value);
     }
     close();
 };
-
-onMounted(initialize);
 </script>
 
 <template>
     <v-data-table
         :headers="headers"
-        :items="desserts"
-        :sort-by="[{ key: 'calories', order: 'asc' }]"
+        :items="products"
+        :sort-by="[{ key: 'name', order: 'asc' }]"
     >
         <template v-slot:top>
             <v-toolbar flat>
@@ -133,7 +186,7 @@ onMounted(initialize);
                 <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ props }">
                         <v-btn class="mb-2" color="primary" dark v-bind="props">
-                            New Item
+                            + Add Product
                         </v-btn>
                     </template>
                     <v-card>
@@ -147,31 +200,35 @@ onMounted(initialize);
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
                                             v-model="editedItem.name"
-                                            label="Dessert name"
+                                            label="Product name"
+                                            :rules="[rules.name]"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
-                                            v-model="editedItem.calories"
-                                            label="Calories"
+                                            v-model="editedItem.quantity"
+                                            label="Quantity (pcs)"
+                                            :rules="[rules.quantity]"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
-                                            v-model="editedItem.fat"
-                                            label="Fat (g)"
+                                            v-model="editedItem.cost_price"
+                                            label="Cost price (₦)"
+                                            :rules="[rules.cost_price]"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
-                                            v-model="editedItem.carbs"
-                                            label="Carbs (g)"
+                                            v-model="editedItem.selling_price"
+                                            :rules="[rules.selling_price]"
+                                            label="Selling price (₦)"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
-                                            v-model="editedItem.protein"
-                                            label="Protein (g)"
+                                            v-model="editedItem.remarks"
+                                            label="Remark"
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
@@ -190,6 +247,7 @@ onMounted(initialize);
                             <v-btn
                                 color="blue-darken-1"
                                 variant="text"
+                                :disabled="!isValid"
                                 @click="save"
                             >
                                 Save
@@ -230,7 +288,7 @@ onMounted(initialize);
             <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
         </template>
         <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize"> Reset </v-btn>
+            <p>No available product</p>
         </template>
     </v-data-table>
 </template>
