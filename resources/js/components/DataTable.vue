@@ -1,13 +1,23 @@
 <script setup>
 import { ref, computed, nextTick, reactive, watch } from "vue";
+import { usePage, router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
+// const props = defineProps({
+//     errors: Object,
+// });
+
+// const { stocks } = usePage().props;
+const toast = useToast();
+const stocks = computed(() => usePage().props.stocks);
 const isValid = ref(false);
+const isLoading = ref(false);
 const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
 
 const rules = reactive({
-    name: (v) => !!v || "Product name is required",
+    product: (v) => !!v || "Product name is required",
     quantity: (v) =>
         (!!v && /^\d+$/.test(v)) || "Quantity must be a whole number",
     cost_price: (v) =>
@@ -22,7 +32,7 @@ const headers = [
     {
         title: "Products",
         align: "start",
-        key: "name",
+        key: "product",
     },
     { title: "Quantity", key: "quantity" },
     { title: "Cost Price (₦)", key: "cost_price" },
@@ -31,85 +41,12 @@ const headers = [
     { title: "Actions", key: "actions", sortable: false },
 ];
 
-const products = ref([
-    {
-        name: "Frozen Yogurt",
-        quantity: 159,
-        cost_price: 6.0,
-        selling_price: 24,
-        remarks: 4.0,
-    },
-    {
-        name: "Ice cream sandwich",
-        quantity: 237,
-        cost_price: 9.0,
-        selling_price: 37,
-        remarks: 4.3,
-    },
-    {
-        name: "Eclair",
-        quantity: 262,
-        cost_price: 16.0,
-        selling_price: 23,
-        remarks: 6.0,
-    },
-    {
-        name: "Cupcake",
-        quantity: 305,
-        cost_price: 3.7,
-        selling_price: 67,
-        remarks: 4.3,
-    },
-    {
-        name: "Gingerbread",
-        quantity: 356,
-        cost_price: 16.0,
-        selling_price: 49,
-        remarks: 3.9,
-    },
-    {
-        name: "Jelly bean",
-        quantity: 375,
-        cost_price: 0.0,
-        selling_price: 94,
-        remarks: 0.0,
-    },
-    {
-        name: "Lollipop",
-        quantity: 392,
-        cost_price: 0.2,
-        selling_price: 98,
-        remarks: 0,
-    },
-    {
-        name: "Honeycomb",
-        quantity: 408,
-        cost_price: 3.2,
-        selling_price: 87,
-        remarks: 6.5,
-    },
-    {
-        name: "Donut",
-        quantity: 452,
-        cost_price: 25.0,
-        selling_price: 51,
-        remarks: 4.9,
-    },
-    {
-        name: "KitKat",
-        quantity: 518,
-        cost_price: 26.0,
-        selling_price: 65,
-        remarks: 7,
-    },
-]);
-
 const defaultItem = {
-    name: "",
+    product: "",
     quantity: 0,
     cost_price: 0,
     selling_price: 0,
-    remarks: 0,
+    remarks: "",
 };
 
 const editedItem = ref({ ...defaultItem });
@@ -129,13 +66,13 @@ const formTitle = computed(() =>
 );
 
 const editItem = (item) => {
-    editedIndex.value = products.value.indexOf(item);
+    editedIndex.value = stocks.value.findIndex((stock) => stock.id === item.id);
     editedItem.value = { ...item };
     dialog.value = true;
 };
 
 const deleteItem = (item) => {
-    editedIndex.value = products.value.indexOf(item);
+    editedIndex.value = stocks.value.findIndex((stock) => stock.id === item.id);
     editedItem.value = { ...item };
     dialogDelete.value = true;
 };
@@ -163,20 +100,36 @@ const closeDelete = () => {
 
 const save = () => {
     if (!isValid.value) return;
+    isLoading.value = true;
+
     if (editedIndex.value > -1) {
-        Object.assign(products.value[editedIndex.value], editedItem.value);
+        // Object.assign(products.value[editedIndex.value], editedItem.value);
     } else {
-        products.value.push(editedItem.value);
+        router.post(route("home.store"), editedItem.value, {
+            onSuccess: () => {
+                setTimeout(() => {
+                    close();
+                }, 500);
+            },
+            onError: (errors) => {
+                const firstError = Object.values(errors)[0];
+                toast.error(firstError);
+            },
+            onFinish: () => {
+                setTimeout(() => {
+                    isLoading.value = false;
+                }, 500);
+            },
+        });
     }
-    close();
 };
 </script>
 
 <template>
     <v-data-table
         :headers="headers"
-        :items="products"
-        :sort-by="[{ key: 'name', order: 'asc' }]"
+        :items="stocks"
+        :sort-by="[{ key: 'product', order: 'asc' }]"
     >
         <template v-slot:top>
             <v-toolbar flat>
@@ -199,9 +152,9 @@ const save = () => {
                                 <v-row>
                                     <v-col cols="12" md="4" sm="6">
                                         <v-text-field
-                                            v-model="editedItem.name"
+                                            v-model="editedItem.product"
                                             label="Product name"
-                                            :rules="[rules.name]"
+                                            :rules="[rules.product]"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="4" sm="6">
@@ -248,6 +201,7 @@ const save = () => {
                                 color="blue-darken-1"
                                 variant="text"
                                 :disabled="!isValid"
+                                :loading="isLoading"
                                 @click="save"
                             >
                                 Save
