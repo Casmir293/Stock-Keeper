@@ -8,8 +8,8 @@ use App\Http\Controllers\StockController;
 Route::middleware('auth')->group(function () {
         Route::get('/', [StockController::class, 'index'])->name('home');
         Route::post('/', [StockController::class, 'store'])->name('home.store');
-        Route::put('/', [StockController::class, 'update'])->name('home.update');
-        Route::delete('/', [StockController::class, 'destroy'])->name('home.destroy');
+        Route::put('/{product_id}', [StockController::class, 'update'])->name('home.update');
+        Route::delete('/{product_id}', [StockController::class, 'destroy'])->name('home.destroy');
 });
 
 Route::middleware('noAuth')->group(function () {

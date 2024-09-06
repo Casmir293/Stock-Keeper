@@ -32,17 +32,17 @@ class StockController extends Controller
         return back()->with('flash', ['success' => 'Product added successfully!']);
     }
 
-    public function update(Request $request, Stock $stock)
+    public function update(Request $request, Stock $product_id)
     {
         $request->validate([
             'product' => 'required|string',
-            'quantity' => 'required|string',
+            'quantity' => 'required',
             'cost_price' => 'required|string',
             'selling_price' => 'required|string',
             'remarks' => 'nullable|string',
         ]);
 
-        $stock->update($request->all());
+        $product_id->update($request->all());
 
         return back()->with('flash', ['success' => 'Product updated successfully!']);
     }

@@ -3,11 +3,6 @@ import { ref, computed, nextTick, reactive, watch } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 
-// const props = defineProps({
-//     errors: Object,
-// });
-
-// const { stocks } = usePage().props;
 const toast = useToast();
 const stocks = computed(() => usePage().props.stocks);
 const isValid = ref(false);
@@ -43,9 +38,9 @@ const headers = [
 
 const defaultItem = {
     product: "",
-    quantity: 0,
-    cost_price: 0,
-    selling_price: 0,
+    quantity: "",
+    cost_price: "",
+    selling_price: "",
     remarks: "",
 };
 
@@ -103,7 +98,23 @@ const save = () => {
     isLoading.value = true;
 
     if (editedIndex.value > -1) {
-        // Object.assign(products.value[editedIndex.value], editedItem.value);
+        const product_id = stocks.value[editedIndex.value].id;
+        router.put(route("home.update", product_id), editedItem.value, {
+            onSuccess: () => {
+                setTimeout(() => {
+                    close();
+                }, 500);
+            },
+            onError: (errors) => {
+                const firstError = Object.values(errors)[0];
+                toast.error(firstError);
+            },
+            onFinish: () => {
+                setTimeout(() => {
+                    isLoading.value = false;
+                }, 500);
+            },
+        });
     } else {
         router.post(route("home.store"), editedItem.value, {
             onSuccess: () => {
