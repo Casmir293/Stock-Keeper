@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useToast } from "vue-toastification";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
     flash: Object,
@@ -21,6 +22,15 @@ watch(
 
 const drawer = ref(true);
 const rail = ref(true);
+
+const logout = () => {
+    router.post(route("logout"), {
+        onError: (errors) => {
+            const firstError = Object.values(errors)[0];
+            toast.error(firstError);
+        },
+    });
+};
 </script>
 
 <template>
@@ -49,14 +59,12 @@ const rail = ref(true);
 
                 <v-divider></v-divider>
 
-                <v-list density="compact" nav>
-                    <!-- <router-link :to="{ name: 'SignOut' }">
-                        <v-list-item
-                            prepend-icon="mdi-logout"
-                            title="Logout"
-                            value="logout"
-                        ></v-list-item>
-                    </router-link> -->
+                <v-list density="compact" nav @click="logout">
+                    <v-list-item
+                        prepend-icon="mdi-logout"
+                        title="Logout"
+                        value="logout"
+                    ></v-list-item>
                 </v-list>
             </v-navigation-drawer>
             <v-main class="m-4 min-h-[96.5dvh]">

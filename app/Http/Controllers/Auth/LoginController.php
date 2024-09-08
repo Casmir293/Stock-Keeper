@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -38,5 +37,12 @@ class LoginController extends Controller
         }
 
         return back()->with('flash', ['error' => 'Invalid email/password'])->withInput();
+    }
+
+    public function logout()
+    {
+        Auth::logout(); 
+
+        return to_route('login')->with('flash', ['success' => 'Logged out successfully!']);
     }
 }
