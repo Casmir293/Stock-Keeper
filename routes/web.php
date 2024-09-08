@@ -10,6 +10,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [StockController::class, 'store'])->name('home.store');
         Route::put('/{product_id}', [StockController::class, 'update'])->name('home.update');
         Route::delete('/{product_id}', [StockController::class, 'destroy'])->name('home.destroy');
+        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 Route::middleware('noAuth')->group(function () {
