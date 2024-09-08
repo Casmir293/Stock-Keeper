@@ -72,21 +72,37 @@ const deleteItem = (item) => {
     dialogDelete.value = true;
 };
 
-const deleteItemConfirm = () => {
-    products.value.splice(editedIndex.value, 1);
-    closeDelete();
-};
-
-const close = () => {
-    dialog.value = false;
+const closeDelete = () => {
+    dialogDelete.value = false;
     nextTick(() => {
         editedItem.value = { ...defaultItem };
         editedIndex.value = -1;
     });
 };
 
-const closeDelete = () => {
-    dialogDelete.value = false;
+const deleteItemConfirm = () => {
+    isLoading.value = true;
+    const product_id = stocks.value[editedIndex.value].id;
+    router.delete(route("home.destroy", product_id), {
+        onSuccess: () => {
+            setTimeout(() => {
+                closeDelete();
+            }, 500);
+        },
+        onError: (errors) => {
+            const firstError = Object.values(errors)[0];
+            toast.error(firstError);
+        },
+        onFinish: () => {
+            setTimeout(() => {
+                isLoading.value = false;
+            }, 500);
+        },
+    });
+};
+
+const close = () => {
+    dialog.value = false;
     nextTick(() => {
         editedItem.value = { ...defaultItem };
         editedIndex.value = -1;
@@ -238,6 +254,7 @@ const save = () => {
                                 color="blue-darken-1"
                                 variant="text"
                                 @click="deleteItemConfirm"
+                                :loading="isLoading"
                                 >OK</v-btn
                             >
                             <v-spacer></v-spacer>

@@ -47,9 +47,9 @@ class StockController extends Controller
         return back()->with('flash', ['success' => 'Product updated successfully!']);
     }
 
-    public function destroy(Stock $stock)
+    public function destroy(Stock $product_id)
     {
-        $stock->delete();
+        $product_id->delete();
 
         return back()->with('flash', ['success' => 'Product deleted successfully!']);
     }
