@@ -6,7 +6,6 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
     errors: Object,
-    flash: Object,
 });
 
 const toast = useToast();
@@ -31,16 +30,6 @@ const rules = reactive({
         "Password must contain an upper case letter, a numeric character, and a special character",
     name: (v: string) => !!v || "Nickname is required",
 });
-
-watch(
-    () => props.flash?.success,
-    (successMessage) => {
-        if (successMessage) {
-            toast.success(successMessage);
-        }
-    },
-    { immediate: true },
-);
 
 watch(
     () => props.errors,

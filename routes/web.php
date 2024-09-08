@@ -1,13 +1,16 @@
 <?php
 
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\StockController;
 
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('home')->middleware('auth');
+Route::middleware('auth')->group(function () {
+        Route::get('/', [StockController::class, 'index'])->name('home');
+        Route::post('/', [StockController::class, 'store'])->name('home.store');
+        Route::put('/{product_id}', [StockController::class, 'update'])->name('home.update');
+        Route::delete('/{product_id}', [StockController::class, 'destroy'])->name('home.destroy');
+});
 
 Route::middleware('noAuth')->group(function () {
         Route::get('/signup', [RegisterController::class, 'index'])->name('signup');

@@ -1,8 +1,23 @@
 <script setup>
-import { ref } from "vue";
-// import useAuth from "@/composables/useAuth";
+import { ref, watch } from "vue";
+import { useToast } from "vue-toastification";
 
-// const { myProfile } = useAuth();
+const props = defineProps({
+    flash: Object,
+    authUser: Object,
+});
+
+const toast = useToast();
+
+watch(
+    () => props.flash?.success,
+    (successMessage) => {
+        if (successMessage) {
+            toast.success(successMessage);
+        }
+    },
+    { immediate: true },
+);
 
 const drawer = ref(true);
 const rail = ref(true);
@@ -20,7 +35,7 @@ const rail = ref(true);
             >
                 <v-list-item
                     prepend-avatar="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                    title="John Doe"
+                    :title="authUser.name"
                     nav
                 >
                     <template v-slot:append>

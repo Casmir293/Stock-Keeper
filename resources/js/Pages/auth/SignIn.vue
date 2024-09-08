@@ -25,16 +25,6 @@ const rules = reactive({
 });
 
 watch(
-    () => props.flash?.success,
-    (successMessage) => {
-        if (successMessage) {
-            toast.success(successMessage);
-        }
-    },
-    { immediate: true },
-);
-
-watch(
     () => props.flash?.error,
     (errorMessage) => {
         if (errorMessage) {
