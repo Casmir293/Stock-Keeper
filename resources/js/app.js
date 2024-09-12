@@ -1,5 +1,5 @@
 import "./bootstrap";
-import BlankLayout from "./Layouts/BlankLayout.vue";
+import BlankLayout from "./layouts/BlankLayout.vue";
 
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
@@ -9,7 +9,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
 const options = {
-    timeout: 3000
+    timeout: 3000,
 };
 
 // Vuetify
