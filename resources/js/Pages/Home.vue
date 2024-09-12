@@ -1,5 +1,5 @@
 <script setup>
-import DefaultLayout from "../Layouts/DefaultLayout.vue";
+import DefaultLayout from "../layouts/DefaultLayout.vue";
 import DataTable from "../components/DataTable.vue";
 import { ref, reactive, watch } from "vue";
 import { useToast } from "vue-toastification";
