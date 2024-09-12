@@ -81,7 +81,7 @@ const submit = () => {
 
             <p>
                 Don't have an account?
-                <Link href="/sign-up" class="text-blue-500">sign up</Link>
+                <Link href="/signup" class="text-blue-500">sign up</Link>
             </p>
         </v-form>
         <v-divider></v-divider>
